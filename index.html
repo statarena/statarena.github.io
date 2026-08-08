@@ -11,34 +11,30 @@
     <style>
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* เอาไฮไลท์สีฟ้าตอนกดปุ่มในมือถือออก */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* ตั้งค่าหน้าจอให้เต็มขอบ 100% ไม่มีแถบเลื่อน */
         html, body {
             margin: 0;
             padding: 0;
             width: 100vw;
-            height: 100vh; /* บังคับให้สูงเต็มหน้าจอ */
+            height: 100vh;
             overflow: hidden;
-            /* พื้นหลังธีมเกมเข้มๆ */
             background: radial-gradient(circle at center, #2c3e50 0%, #0d1117 100%);
             font-family: 'Prompt', sans-serif;
             color: white;
         }
 
-        /* จัดเรียงเลย์เอาต์ให้กระจายตัวเต็มจอ */
         .game-screen {
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly; /* กระจายช่องว่างบน-กลาง-ล่างให้เท่ากัน */
+            justify-content: space-evenly;
             align-items: center;
             width: 100%;
             height: 100%;
             padding: 20px;
         }
 
-        /* ส่วนของโลโก้ */
         .logo-section {
             width: 100%;
             display: flex;
@@ -50,10 +46,9 @@
         .game-logo {
             width: 100%;
             max-width: 500px;
-            max-height: 45vh; /* ให้โลโก้กินพื้นที่ไม่เกิน 45% ของความสูงจอ */
+            max-height: 45vh;
             object-fit: contain;
             filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
-            /* เพิ่มลูกเล่นขยับขึ้นลงเบาๆ เหมือนลอยได้ */
             animation: float 4s ease-in-out infinite; 
         }
 
@@ -63,7 +58,6 @@
             100% { transform: translateY(0px); }
         }
 
-        /* ส่วนข้อความและปุ่มกด */
         .action-section {
             display: flex;
             flex-direction: column;
@@ -73,7 +67,7 @@
         }
 
         h1 {
-            color: #bda26b; /* สีทอง */
+            color: #bda26b;
             font-size: 32px;
             margin: 0 0 10px 0;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
@@ -86,7 +80,6 @@
             margin: 0 0 30px 0;
         }
 
-        /* ปุ่มกดขนาดใหญ่เต็มตา */
         .btn-start {
             display: flex;
             justify-content: center;
@@ -104,39 +97,89 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: transform 0.1s;
+            cursor: pointer;
         }
 
-        /* เอฟเฟกต์เวลากดปุ่ม */
         .btn-start:active {
-            transform: scale(0.95); /* ปุ่มยุบลงเวลากด */
+            transform: scale(0.95);
             box-shadow: 0 4px 10px rgba(211, 84, 0, 0.5);
         }
 
-        /* ข้อความแจ้งเตือนด้านล่างสุด */
         .notice {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.4);
             text-align: center;
             margin-bottom: 10px;
         }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(13, 17, 23, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #bda26b;
+            border-top: 6px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: #bda26b;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
     </style>
 </head>
 <body>
 
     <div class="game-screen">
-        
-        <!-- โลโก้เกมขยายเต็มจอ -->
         <div class="logo-section">
             <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
         </div>
 
-        <!-- ส่วนของปุ่มเข้าเกม -->
         <div class="action-section">
             <h1>เข้าสู่สนามประลอง</h1>
             <p>เตรียมตัวให้พร้อม แล้วเริ่มเกมได้เลย</p>
             
-            <!-- ใช้ลิงก์ตรงของ Google Script เพื่อแก้ปัญหากดไม่ไปใน Chrome -->
-            <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" class="btn-start">
+            <!-- แก้ไข: ใส่ target="_top" เพื่อบังคับ Chrome โหลดสคริปต์ระดับสูงสุด และเรียกโชว์ Loading เฉยๆ ไม่สกัดกั้นลิงก์ -->
+            <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
+               class="btn-start" 
+               target="_top"
+               onclick="showLoading()">
                 เริ่มเกม
             </a>
         </div>
@@ -144,8 +187,20 @@
         <div class="notice">
             ระบบจะให้คุณลงชื่อเข้าใช้ด้วยบัญชี Google อัตโนมัติ
         </div>
-
     </div>
+
+    <div class="loading-overlay" id="loadingScreen">
+        <div class="spinner"></div>
+        <div class="loading-text">กำลังโหลดระบบ...</div>
+    </div>
+
+    <script>
+        function showLoading() {
+            // แค่เรียกหน้าจอ Loading ขึ้นมาให้ดูสวยงามระหว่างที่เบราว์เซอร์ทำการเปลี่ยนหน้า
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.add('active');
+        }
+    </script>
 
 </body>
 </html>
