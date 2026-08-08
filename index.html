@@ -11,6 +11,7 @@
     <style>
         * {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -31,11 +32,11 @@
         .game-logo {
             width: 90%;
             max-width: 450px;
-            max-height: 40vh;
+            max-height: 35vh;
             object-fit: contain;
             filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
             animation: float 4s ease-in-out infinite; 
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         @keyframes float {
@@ -44,18 +45,18 @@
             100% { transform: translateY(0px); }
         }
 
-        /* ส่วนของ Loading Animation */
         .loading-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 120px; /* จองพื้นที่ไว้เพื่อไม่ให้หน้าจอกระตุกตอนปุ่มโผล่ */
         }
 
         .spinner {
             width: 50px;
             height: 50px;
             border: 5px solid rgba(189, 162, 107, 0.3);
-            border-top: 5px solid #bda26b; /* สีทองแดง */
+            border-top: 5px solid #bda26b;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
@@ -63,9 +64,9 @@
 
         .loading-text {
             color: #bda26b;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             animation: pulse 1.5s ease-in-out infinite;
         }
 
@@ -80,11 +81,47 @@
             100% { opacity: 0.5; }
         }
 
+        /* ----- สไตล์สำหรับปุ่มสำรอง (Fallback) ----- */
+        .fallback-section {
+            display: none; /* เริ่มต้นให้ซ่อนไว้ก่อน */
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fallback-message {
+            color: #ff9999;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .btn-fallback {
+            display: inline-block;
+            background: linear-gradient(to bottom, #f39c12, #d35400);
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 12px 35px;
+            border-radius: 50px;
+            border: 2px solid #ffdb58;
+            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.5);
+            transition: transform 0.1s;
+        }
+
+        .btn-fallback:active {
+            transform: scale(0.95);
+        }
+
         .notice {
             position: absolute;
             bottom: 20px;
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.3);
             text-align: center;
             width: 100%;
         }
@@ -92,29 +129,43 @@
 </head>
 <body>
 
-    <!-- โลโก้เกม -->
     <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <!-- สถานะกำลังโหลด -->
-    <div class="loading-container">
-        <div class="spinner"></div>
-        <div class="loading-text">กำลังเข้าสู่สนามประลอง...</div>
+    <div class="loading-container" id="loadingArea">
+        <div class="spinner" id="spinnerIcon"></div>
+        <div class="loading-text" id="loadingStatus">กำลังเข้าสู่สนามประลอง...</div>
+        
+        <!-- ปุ่มสำรอง จะแสดงขึ้นมาเมื่อเบราว์เซอร์บล็อกสคริปต์อัตโนมัติ -->
+        <div class="fallback-section" id="fallbackArea">
+            <div class="fallback-message">เบราว์เซอร์ของคุณบล็อกการเข้าเกมอัตโนมัติ</div>
+            <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" target="_top" class="btn-fallback">
+                คลิกที่นี่เพื่อเข้าเกมด้วยตัวเอง
+            </a>
+        </div>
     </div>
 
-    <!-- ข้อความแจ้งเตือนด้านล่างสุด -->
-    <div class="notice">
-        ระบบจะนำคุณเข้าสู่เกมโดยอัตโนมัติ
-    </div>
+    <div class="notice">ระบบรักษาความปลอดภัยอาจให้คุณเลือกบัญชี Google ก่อนเข้าเล่น</div>
 
-    <!-- สคริปต์สำหรับส่งต่อไปยังหน้าเว็บอัตโนมัติ -->
     <script>
-        // เมื่อหน้าเว็บโหลดเสร็จ
         window.onload = function() {
-            // หน่วงเวลาให้โชว์หน้า Loading 1.5 วินาที (1500 มิลลิวินาที) เพื่อความสวยงาม
+            // ลิงก์ปลายทางของเกม
+            const gameUrl = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec";
+            
+            // 1. ลองส่งต่ออัตโนมัติหลังจากโหลดภาพเสร็จ 1 วินาที
             setTimeout(function() {
-                // ส่งต่อไปยังลิงก์ Google Script ทันที (ใช้ window.top เพื่อป้องกันการถูกบล็อกใน Chrome)
-                window.top.location.href = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec";
-            }, 1500); 
+                window.top.location.href = gameUrl;
+            }, 1000); 
+
+            // 2. แผนสำรอง: ถ้าผ่านไป 3.5 วินาทีแล้ว ผู้เล่นยังอยู่หน้าเดิม 
+            // แปลว่า Chrome บล็อกคำสั่งด้านบน ให้แสดงปุ่มให้ผู้เล่นกดแทน
+            setTimeout(function() {
+                // ซ่อนไอคอนหมุนๆ
+                document.getElementById('spinnerIcon').style.display = 'none';
+                document.getElementById('loadingStatus').style.display = 'none';
+                
+                // แสดงปุ่มกดเข้าเกมด้วยตัวเอง
+                document.getElementById('fallbackArea').style.display = 'block';
+            }, 3500);
         };
     </script>
 
