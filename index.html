@@ -100,7 +100,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ปุ่มคัดลอกลิงก์ (ช่วยแก้ปัญหา Chrome) */
         .copy-link-btn {
             margin-top: 20px;
             background: transparent;
@@ -138,8 +137,8 @@
 
     <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <!-- ลิงก์ตรงไปหน้าเลือกบัญชี Google แบบ HTML บริสุทธิ์ -->
-    <a href="https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
+    <!-- ลิงก์ตรงที่ต่อท้ายด้วย ?authuser=0 เพื่อบังคับใช้บัญชีหลักของเครื่อง -->
+    <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec?authuser=0" 
        id="startGameBtn" 
        class="btn-start" 
        target="_top"
@@ -148,13 +147,13 @@
         <div class="mini-spinner" id="btnSpinner"></div>
     </a>
 
-    <!-- ปุ่มคัดลอกลิงก์แก้ปัญหา Chrome มือถือ -->
+    <!-- ปุ่มคัดลอกลิงก์ -->
     <button class="copy-link-btn" onclick="copyGameLink()">
         🔗 หากเข้าเกมไม่ได้ คลิกเพื่อคัดลอกลิงก์
     </button>
 
     <div class="notice">
-        ระบบอาจให้คุณเลือกบัญชี Google ก่อนเข้าเกมเพื่อความเสถียร
+        ระบบจะเชื่อมต่อเข้าสู่เกมด้วยบัญชีหลักของเครื่องโดยอัตโนมัติ
     </div>
 
     <script>
@@ -162,14 +161,12 @@
             const btn = document.getElementById('startGameBtn');
             const text = document.getElementById('btnText');
             btn.classList.add('is-loading');
-            text.innerText = 'กำลังตรวจสอบบัญชี...';
+            text.innerText = 'กำลังเชื่อมต่อระบบ...';
         }
 
         function copyGameLink() {
-            // ลิงก์ตรงที่ใช้สำหรับคัดลอก
-            const gameUrl = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec";
-            
-            // สร้างกล่องข้อความจำลองเพื่อคัดลอก
+            // อัปเดตลิงก์สำหรับปุ่มคัดลอกให้มี ?authuser=0 ด้วยเช่นกัน
+            const gameUrl = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec?authuser=0";
             const tempInput = document.createElement("input");
             tempInput.value = gameUrl;
             document.body.appendChild(tempInput);
@@ -177,9 +174,8 @@
             document.execCommand("copy");
             document.body.removeChild(tempInput);
             
-            // เปลี่ยนข้อความแจ้งเตือนผู้ใช้
             const copyBtn = document.querySelector('.copy-link-btn');
-            copyBtn.innerText = "✅ คัดลอกแล้ว! นำไปวางในช่องค้นหาด้านบนได้เลย";
+            copyBtn.innerText = "✅ คัดลอกแล้ว! นำไปวางในแถบ URL ด้านบนได้เลย";
             copyBtn.style.color = "#4CAF50";
             copyBtn.style.borderColor = "#4CAF50";
             
