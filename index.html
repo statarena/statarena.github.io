@@ -2,7 +2,8 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ปรับ viewport ให้เหมาะสมกับมือถือที่สุด ป้องกันการซูมแปลกๆ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +19,8 @@
             margin: 0;
             padding: 0;
             width: 100vw;
-            height: 100vh;
+            /* เปลี่ยนมาใช้ dvh เพื่อแก้ปัญหาแถบ URL มือถือบังหน้าจอ */
+            height: 100dvh; 
             overflow: hidden;
             background: radial-gradient(circle at center, #2c3e50 0%, #0d1117 100%);
             font-family: 'Prompt', sans-serif;
@@ -29,14 +31,15 @@
             align-items: center;
         }
 
+        /* ปรับสัดส่วนโลโก้ใหม่ให้ Responsive กับมือถือทุกรุ่น */
         .game-logo {
-            width: 90%;
-            max-width: 450px;
-            max-height: 40vh;
+            width: 80vw; /* ให้กว้าง 80% ของหน้าจอเสมอ */
+            max-width: 380px; /* แต่ไม่เกิน 380px (สำหรับจอคอม/แท็บเล็ต) */
+            max-height: 40dvh;
             object-fit: contain;
             filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
             animation: float 4s ease-in-out infinite; 
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         @keyframes float {
@@ -45,6 +48,7 @@
             100% { transform: translateY(0px); }
         }
 
+        /* เปลี่ยนปุ่มจาก <a> เป็น <button> เพื่อใช้ส่งฟอร์ม */
         .btn-start {
             display: flex;
             justify-content: center;
@@ -52,10 +56,11 @@
             background: linear-gradient(to bottom, #f39c12, #d35400);
             color: white;
             text-decoration: none;
-            font-size: 24px;
+            font-size: 22px; /* ปรับฟอนต์ให้พอดีจอมือถือมากขึ้น */
             font-weight: 700;
-            padding: 15px 40px;
-            min-width: 280px;
+            padding: 15px 30px;
+            width: 80vw;
+            max-width: 300px;
             height: 65px;
             border-radius: 50px;
             border: 3px solid #ffdb58;
@@ -65,6 +70,7 @@
             transition: all 0.2s;
             cursor: pointer;
             position: relative;
+            outline: none;
         }
 
         .btn-start:active {
@@ -82,13 +88,13 @@
 
         .mini-spinner {
             display: none;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-top: 3px solid #ffffff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-left: 15px;
+            margin-left: 10px;
         }
 
         .btn-start.is-loading .mini-spinner {
@@ -99,7 +105,7 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         .notice {
             position: absolute;
             bottom: 25px;
@@ -115,15 +121,15 @@
 
     <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <!-- ลิงก์ตรงที่สะอาดที่สุด ไม่มีพารามิเตอร์เช็คบัญชีใดๆ ทั้งสิ้น -->
-    <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
-       id="startGameBtn" 
-       class="btn-start" 
-       target="_top"
-       onclick="handleButtonClick()">
+    <!-- เทคนิคไม้ตาย: ใช้ Form Submission แทนการกดลิงก์ธรรมดา เพื่อหลอก Chrome Mobile -->
+    <form id="gameForm" action="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" method="GET" style="display: none;">
+        <!-- ฟอร์มนี้ถูกซ่อนไว้ ทำหน้าที่ส่งผู้เล่นไปยังหน้า Google Script -->
+    </form>
+
+    <button id="startGameBtn" class="btn-start" onclick="handleButtonClick()">
         <span id="btnText">เข้าสู่สนามประลอง</span>
         <div class="mini-spinner" id="btnSpinner"></div>
-    </a>
+    </button>
 
     <div class="notice">
         คลิกเพื่อเริ่มต้นเกมได้ทันที
@@ -131,11 +137,30 @@
 
     <script>
         function handleButtonClick() {
+            // 1. เปลี่ยนหน้าตาปุ่มเป็นสถานะกำลังโหลด
             const btn = document.getElementById('startGameBtn');
             const text = document.getElementById('btnText');
             btn.classList.add('is-loading');
-            text.innerText = 'กำลังเข้าสู่เกม...';
+            text.innerText = 'กำลังเชื่อมต่อ...';
+
+            // 2. สั่งให้ Form ทำงานเพื่อส่งหน้าเว็บไปหา Google Script (ทะลุบล็อก Chrome)
+            setTimeout(() => {
+                document.getElementById('gameForm').submit();
+            }, 100);
         }
+
+        // 3. สคริปต์แก้ปัญหาปุ่มหมุนค้าง เวลากดปุ่ม Back (ย้อนกลับ) กลับมาที่หน้านี้
+        window.addEventListener('pageshow', function(event) {
+            // event.persisted จะเป็น true ถ้าระบบดึงหน้าเว็บมาจากแคช (การกดถอยหลัง)
+            if (event.persisted) {
+                const btn = document.getElementById('startGameBtn');
+                const text = document.getElementById('btnText');
+                
+                // สั่งลบสถานะกำลังโหลดออก เพื่อให้ปุ่มกลับมาพร้อมกดใหม่
+                btn.classList.remove('is-loading');
+                text.innerText = 'เข้าสู่สนามประลอง';
+            }
+        });
     </script>
 
 </body>
