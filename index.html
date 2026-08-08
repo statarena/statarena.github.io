@@ -45,7 +45,6 @@
             100% { transform: translateY(0px); }
         }
 
-        /* ดีไซน์ปุ่มหลัก */
         .btn-start {
             display: flex;
             justify-content: center;
@@ -73,16 +72,14 @@
             box-shadow: 0 4px 10px rgba(211, 84, 0, 0.5);
         }
 
-        /* สถานะปุ่มตอนถูกกดแล้ว (Loading State) */
         .btn-start.is-loading {
             background: linear-gradient(to bottom, #7f8c8d, #34495e);
             border-color: #95a5a6;
             box-shadow: none;
-            pointer-events: none; /* ป้องกันการกดเบิ้ล */
+            pointer-events: none;
             transform: scale(0.98);
         }
 
-        /* ไอคอนหมุนโหลดขนาดเล็กในปุ่ม */
         .mini-spinner {
             display: none;
             width: 24px;
@@ -115,12 +112,10 @@
 </head>
 <body>
 
-    <!-- โลโก้เกม -->
-    <img src="logo2.png" alt="STAT ARENA" class="game-logo">
+    <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <!-- ลิงก์ตรงแบบ HTML บริสุทธิ์ (ปลอดภัยจากการถูก Chrome บล็อกที่สุด) -->
-    <!-- target="_top" บังคับให้โหลดหน้าเว็บทับกรอบความปลอดภัยทั้งหมด -->
-    <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
+    <!-- เปลี่ยนลิงก์กลับไปใช้ AccountChooser เพื่อแก้ปัญหา Chrome ค้างเพราะล็อกอินหลายอีเมล -->
+    <a href="https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
        id="startGameBtn" 
        class="btn-start" 
        target="_top"
@@ -129,21 +124,17 @@
         <div class="mini-spinner" id="btnSpinner"></div>
     </a>
 
-    <!-- ข้อความแจ้งเตือน -->
     <div class="notice">
-        ระบบจะให้คุณลงชื่อเข้าใช้ด้วยบัญชี Google ก่อนเข้าเกม
+        ระบบอาจให้คุณเลือกบัญชี Google ก่อนเข้าเกมเพื่อความเสถียร
     </div>
 
     <script>
-        // ฟังก์ชันนี้ทำหน้าที่แค่ "เปลี่ยนหน้าตาปุ่ม" ให้ผู้เล่นรู้ว่าโหลดอยู่
-        // โดยไม่ไปขัดขวางการทำงานของแท็ก <a> ที่เบราว์เซอร์อนุญาต
         function handleButtonClick() {
             const btn = document.getElementById('startGameBtn');
             const text = document.getElementById('btnText');
             
-            // เปลี่ยนรูปร่างปุ่มเป็นโหมดโหลด
             btn.classList.add('is-loading');
-            text.innerText = 'กำลังเชื่อมต่อ...';
+            text.innerText = 'กำลังตรวจสอบบัญชี...';
         }
     </script>
 
