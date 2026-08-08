@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>STAT ARENA - กำลังเข้าสู่เกม...</title>
+    <title>STAT ARENA - เริ่มเกม</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -32,11 +32,11 @@
         .game-logo {
             width: 90%;
             max-width: 450px;
-            max-height: 35vh;
+            max-height: 40vh;
             object-fit: contain;
             filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
             animation: float 4s ease-in-out infinite; 
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         @keyframes float {
@@ -45,29 +45,57 @@
             100% { transform: translateY(0px); }
         }
 
-        .loading-container {
+        /* ดีไซน์ปุ่มหลัก */
+        .btn-start {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            height: 120px; /* จองพื้นที่ไว้เพื่อไม่ให้หน้าจอกระตุกตอนปุ่มโผล่ */
+            background: linear-gradient(to bottom, #f39c12, #d35400);
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 700;
+            padding: 15px 40px;
+            min-width: 280px;
+            height: 65px;
+            border-radius: 50px;
+            border: 3px solid #ffdb58;
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.5), inset 0 2px 2px rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(189, 162, 107, 0.3);
-            border-top: 5px solid #bda26b;
+        .btn-start:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.5);
+        }
+
+        /* สถานะปุ่มตอนถูกกดแล้ว (Loading State) */
+        .btn-start.is-loading {
+            background: linear-gradient(to bottom, #7f8c8d, #34495e);
+            border-color: #95a5a6;
+            box-shadow: none;
+            pointer-events: none; /* ป้องกันการกดเบิ้ล */
+            transform: scale(0.98);
+        }
+
+        /* ไอคอนหมุนโหลดขนาดเล็กในปุ่ม */
+        .mini-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #ffffff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-left: 15px;
         }
 
-        .loading-text {
-            color: #bda26b;
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            animation: pulse 1.5s ease-in-out infinite;
+        .btn-start.is-loading .mini-spinner {
+            display: inline-block;
         }
 
         @keyframes spin {
@@ -75,98 +103,48 @@
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        /* ----- สไตล์สำหรับปุ่มสำรอง (Fallback) ----- */
-        .fallback-section {
-            display: none; /* เริ่มต้นให้ซ่อนไว้ก่อน */
-            text-align: center;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fallback-message {
-            color: #ff9999;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .btn-fallback {
-            display: inline-block;
-            background: linear-gradient(to bottom, #f39c12, #d35400);
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 600;
-            padding: 12px 35px;
-            border-radius: 50px;
-            border: 2px solid #ffdb58;
-            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.5);
-            transition: transform 0.1s;
-        }
-
-        .btn-fallback:active {
-            transform: scale(0.95);
-        }
-
         .notice {
             position: absolute;
-            bottom: 20px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.3);
+            bottom: 25px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
             text-align: center;
-            width: 100%;
+            width: 90%;
         }
     </style>
 </head>
 <body>
 
+    <!-- โลโก้เกม -->
     <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <div class="loading-container" id="loadingArea">
-        <div class="spinner" id="spinnerIcon"></div>
-        <div class="loading-text" id="loadingStatus">กำลังเข้าสู่สนามประลอง...</div>
-        
-        <!-- ปุ่มสำรอง จะแสดงขึ้นมาเมื่อเบราว์เซอร์บล็อกสคริปต์อัตโนมัติ -->
-        <div class="fallback-section" id="fallbackArea">
-            <div class="fallback-message">เบราว์เซอร์ของคุณบล็อกการเข้าเกมอัตโนมัติ</div>
-            <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" target="_top" class="btn-fallback">
-                คลิกที่นี่เพื่อเข้าเกมด้วยตัวเอง
-            </a>
-        </div>
+    <!-- ลิงก์ตรงแบบ HTML บริสุทธิ์ (ปลอดภัยจากการถูก Chrome บล็อกที่สุด) -->
+    <!-- target="_top" บังคับให้โหลดหน้าเว็บทับกรอบความปลอดภัยทั้งหมด -->
+    <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
+       id="startGameBtn" 
+       class="btn-start" 
+       target="_top"
+       onclick="handleButtonClick()">
+        <span id="btnText">เข้าสู่สนามประลอง</span>
+        <div class="mini-spinner" id="btnSpinner"></div>
+    </a>
+
+    <!-- ข้อความแจ้งเตือน -->
+    <div class="notice">
+        ระบบจะให้คุณลงชื่อเข้าใช้ด้วยบัญชี Google ก่อนเข้าเกม
     </div>
 
-    <div class="notice">ระบบรักษาความปลอดภัยอาจให้คุณเลือกบัญชี Google ก่อนเข้าเล่น</div>
-
     <script>
-        window.onload = function() {
-            // ลิงก์ปลายทางของเกม
-            const gameUrl = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec";
+        // ฟังก์ชันนี้ทำหน้าที่แค่ "เปลี่ยนหน้าตาปุ่ม" ให้ผู้เล่นรู้ว่าโหลดอยู่
+        // โดยไม่ไปขัดขวางการทำงานของแท็ก <a> ที่เบราว์เซอร์อนุญาต
+        function handleButtonClick() {
+            const btn = document.getElementById('startGameBtn');
+            const text = document.getElementById('btnText');
             
-            // 1. ลองส่งต่ออัตโนมัติหลังจากโหลดภาพเสร็จ 1 วินาที
-            setTimeout(function() {
-                window.top.location.href = gameUrl;
-            }, 1000); 
-
-            // 2. แผนสำรอง: ถ้าผ่านไป 3.5 วินาทีแล้ว ผู้เล่นยังอยู่หน้าเดิม 
-            // แปลว่า Chrome บล็อกคำสั่งด้านบน ให้แสดงปุ่มให้ผู้เล่นกดแทน
-            setTimeout(function() {
-                // ซ่อนไอคอนหมุนๆ
-                document.getElementById('spinnerIcon').style.display = 'none';
-                document.getElementById('loadingStatus').style.display = 'none';
-                
-                // แสดงปุ่มกดเข้าเกมด้วยตัวเอง
-                document.getElementById('fallbackArea').style.display = 'block';
-            }, 3500);
-        };
+            // เปลี่ยนรูปร่างปุ่มเป็นโหมดโหลด
+            btn.classList.add('is-loading');
+            text.innerText = 'กำลังเชื่อมต่อ...';
+        }
     </script>
 
 </body>
