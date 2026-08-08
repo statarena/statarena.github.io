@@ -107,6 +107,7 @@
             color: rgba(255, 255, 255, 0.4);
             text-align: center;
             width: 90%;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -114,7 +115,7 @@
 
     <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <!-- เปลี่ยนลิงก์กลับไปใช้ AccountChooser เพื่อแก้ปัญหา Chrome ค้างเพราะล็อกอินหลายอีเมล -->
+    <!-- ลิงก์ตรงไปหน้าเลือกบัญชี Google แบบ HTML บริสุทธิ์ -->
     <a href="https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
        id="startGameBtn" 
        class="btn-start" 
@@ -133,6 +134,7 @@
             const btn = document.getElementById('startGameBtn');
             const text = document.getElementById('btnText');
             
+            // เปลี่ยนหน้าตาปุ่มเป็นสถานะโหลด
             btn.classList.add('is-loading');
             text.innerText = 'กำลังตรวจสอบบัญชี...';
         }
