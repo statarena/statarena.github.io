@@ -6,12 +6,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>STAT ARENA - เริ่มเกม</title>
+    <title>STAT ARENA - กำลังเข้าสู่เกม...</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -23,33 +22,20 @@
             background: radial-gradient(circle at center, #2c3e50 0%, #0d1117 100%);
             font-family: 'Prompt', sans-serif;
             color: white;
-        }
-
-        .game-screen {
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-        }
-
-        .logo-section {
-            width: 100%;
-            display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
         }
 
         .game-logo {
-            width: 100%;
-            max-width: 500px;
-            max-height: 45vh;
+            width: 90%;
+            max-width: 450px;
+            max-height: 40vh;
             object-fit: contain;
             filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
             animation: float 4s ease-in-out infinite; 
+            margin-bottom: 40px;
         }
 
         @keyframes float {
@@ -58,87 +44,18 @@
             100% { transform: translateY(0px); }
         }
 
-        .action-section {
+        /* ส่วนของ Loading Animation */
+        .loading-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            width: 100%;
-        }
-
-        h1 {
-            color: #bda26b;
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-            font-weight: 700;
-        }
-
-        p {
-            color: #a8b2bd;
-            font-size: 16px;
-            margin: 0 0 30px 0;
-        }
-
-        .btn-start {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to bottom, #f39c12, #d35400);
-            color: white;
-            text-decoration: none;
-            font-size: 26px;
-            font-weight: 700;
-            padding: 15px 50px;
-            min-width: 250px;
-            border-radius: 50px;
-            border: 3px solid #ffdb58;
-            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.5), inset 0 2px 2px rgba(255,255,255,0.4);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: transform 0.1s;
-            cursor: pointer;
-        }
-
-        .btn-start:active {
-            transform: scale(0.95);
-            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.5);
-        }
-
-        .notice {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(13, 17, 23, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .loading-overlay.active {
-            opacity: 1;
-            pointer-events: all;
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #bda26b;
-            border-top: 6px solid transparent;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(189, 162, 107, 0.3);
+            border-top: 5px solid #bda26b; /* สีทองแดง */
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
@@ -146,7 +63,7 @@
 
         .loading-text {
             color: #bda26b;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             letter-spacing: 2px;
             animation: pulse 1.5s ease-in-out infinite;
@@ -158,48 +75,47 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 0.6; }
+            0% { opacity: 0.5; }
             50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            100% { opacity: 0.5; }
+        }
+
+        .notice {
+            position: absolute;
+            bottom: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="game-screen">
-        <div class="logo-section">
-            <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
-        </div>
+    <!-- โลโก้เกม -->
+    <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-        <div class="action-section">
-            <h1>เข้าสู่สนามประลอง</h1>
-            <p>เตรียมตัวให้พร้อม แล้วเริ่มเกมได้เลย</p>
-            
-            <!-- แก้ไข: ใส่ target="_top" เพื่อบังคับ Chrome โหลดสคริปต์ระดับสูงสุด และเรียกโชว์ Loading เฉยๆ ไม่สกัดกั้นลิงก์ -->
-            <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
-               class="btn-start" 
-               target="_top"
-               onclick="showLoading()">
-                เริ่มเกม
-            </a>
-        </div>
-        
-        <div class="notice">
-            ระบบจะให้คุณลงชื่อเข้าใช้ด้วยบัญชี Google อัตโนมัติ
-        </div>
-    </div>
-
-    <div class="loading-overlay" id="loadingScreen">
+    <!-- สถานะกำลังโหลด -->
+    <div class="loading-container">
         <div class="spinner"></div>
-        <div class="loading-text">กำลังโหลดระบบ...</div>
+        <div class="loading-text">กำลังเข้าสู่สนามประลอง...</div>
     </div>
 
+    <!-- ข้อความแจ้งเตือนด้านล่างสุด -->
+    <div class="notice">
+        ระบบจะนำคุณเข้าสู่เกมโดยอัตโนมัติ
+    </div>
+
+    <!-- สคริปต์สำหรับส่งต่อไปยังหน้าเว็บอัตโนมัติ -->
     <script>
-        function showLoading() {
-            // แค่เรียกหน้าจอ Loading ขึ้นมาให้ดูสวยงามระหว่างที่เบราว์เซอร์ทำการเปลี่ยนหน้า
-            const loadingScreen = document.getElementById('loadingScreen');
-            loadingScreen.classList.add('active');
-        }
+        // เมื่อหน้าเว็บโหลดเสร็จ
+        window.onload = function() {
+            // หน่วงเวลาให้โชว์หน้า Loading 1.5 วินาที (1500 มิลลิวินาที) เพื่อความสวยงาม
+            setTimeout(function() {
+                // ส่งต่อไปยังลิงก์ Google Script ทันที (ใช้ window.top เพื่อป้องกันการถูกบล็อกใน Chrome)
+                window.top.location.href = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec";
+            }, 1500); 
+        };
     </script>
 
 </body>
