@@ -36,7 +36,7 @@
             object-fit: contain;
             filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
             animation: float 4s ease-in-out infinite; 
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         @keyframes float {
@@ -100,6 +100,29 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ปุ่มคัดลอกลิงก์ (ช่วยแก้ปัญหา Chrome) */
+        .copy-link-btn {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-link-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .copy-link-btn:active {
+            transform: scale(0.95);
+        }
+
         .notice {
             position: absolute;
             bottom: 25px;
@@ -125,6 +148,11 @@
         <div class="mini-spinner" id="btnSpinner"></div>
     </a>
 
+    <!-- ปุ่มคัดลอกลิงก์แก้ปัญหา Chrome มือถือ -->
+    <button class="copy-link-btn" onclick="copyGameLink()">
+        🔗 หากเข้าเกมไม่ได้ คลิกเพื่อคัดลอกลิงก์
+    </button>
+
     <div class="notice">
         ระบบอาจให้คุณเลือกบัญชี Google ก่อนเข้าเกมเพื่อความเสถียร
     </div>
@@ -133,10 +161,33 @@
         function handleButtonClick() {
             const btn = document.getElementById('startGameBtn');
             const text = document.getElementById('btnText');
-            
-            // เปลี่ยนหน้าตาปุ่มเป็นสถานะโหลด
             btn.classList.add('is-loading');
             text.innerText = 'กำลังตรวจสอบบัญชี...';
+        }
+
+        function copyGameLink() {
+            // ลิงก์ตรงที่ใช้สำหรับคัดลอก
+            const gameUrl = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec";
+            
+            // สร้างกล่องข้อความจำลองเพื่อคัดลอก
+            const tempInput = document.createElement("input");
+            tempInput.value = gameUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            
+            // เปลี่ยนข้อความแจ้งเตือนผู้ใช้
+            const copyBtn = document.querySelector('.copy-link-btn');
+            copyBtn.innerText = "✅ คัดลอกแล้ว! นำไปวางในช่องค้นหาด้านบนได้เลย";
+            copyBtn.style.color = "#4CAF50";
+            copyBtn.style.borderColor = "#4CAF50";
+            
+            setTimeout(() => {
+                copyBtn.innerText = "🔗 หากเข้าเกมไม่ได้ คลิกเพื่อคัดลอกลิงก์";
+                copyBtn.style.color = "rgba(255, 255, 255, 0.7)";
+                copyBtn.style.borderColor = "rgba(255, 255, 255, 0.3)";
+            }, 5000);
         }
     </script>
 
