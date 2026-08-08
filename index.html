@@ -3,125 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- ตั้งค่าให้แสดงเต็มจอแบบแอปพลิเคชันบนมือถือ (Mobile Web App) -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#1a252f">
-
     <title>STAT ARENA - เริ่มเกม</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* แก้ไขให้รองรับการเลื่อนจอหากมือถือจอเล็ก และให้เต็มจอพอดี */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* เอาไฮไลท์สีฟ้าตอนกดปุ่มในมือถือออก */
+        }
+
+        /* ตั้งค่าหน้าจอให้เต็มขอบ 100% ไม่มีแถบเลื่อน */
         html, body {
-            min-height: 100vh;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            width: 100vw;
+            height: 100vh; /* บังคับให้สูงเต็มหน้าจอ */
+            overflow: hidden;
+            /* พื้นหลังธีมเกมเข้มๆ */
+            background: radial-gradient(circle at center, #2c3e50 0%, #0d1117 100%);
+            font-family: 'Prompt', sans-serif;
+            color: white;
+        }
+
+        /* จัดเรียงเลย์เอาต์ให้กระจายตัวเต็มจอ */
+        .game-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* กระจายช่องว่างบน-กลาง-ล่างให้เท่ากัน */
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+        }
+
+        /* ส่วนของโลโก้ */
+        .logo-section {
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            -webkit-tap-highlight-color: transparent; /* เอาไฮไลท์สีฟ้าตอนกดลิงก์ในมือถือออก */
-        }
-
-        .container {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            border: 4px solid #bda26b;
-            text-align: center;
-            max-width: 480px;
-            width: 85%;
-            margin: 20px; /* เพิ่มขอบกันชนหน้าจอมือถือ */
+            margin-top: 20px;
         }
 
         .game-logo {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 25px;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+            width: 100%;
+            max-width: 500px;
+            max-height: 45vh; /* ให้โลโก้กินพื้นที่ไม่เกิน 45% ของความสูงจอ */
+            object-fit: contain;
+            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
+            /* เพิ่มลูกเล่นขยับขึ้นลงเบาๆ เหมือนลอยได้ */
+            animation: float 4s ease-in-out infinite; 
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* ส่วนข้อความและปุ่มกด */
+        .action-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
         }
 
         h1 {
-            margin-top: 0;
-            color: #bda26b;
-            font-size: 28px;
-            margin-bottom: 10px;
-            font-weight: 600;
+            color: #bda26b; /* สีทอง */
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+            font-weight: 700;
         }
 
         p {
-            color: #d1d1d1;
-            margin-bottom: 30px;
+            color: #a8b2bd;
             font-size: 16px;
-            line-height: 1.5;
+            margin: 0 0 30px 0;
         }
 
+        /* ปุ่มกดขนาดใหญ่เต็มตา */
         .btn-start {
-            display: inline-block;
-            background: linear-gradient(45deg, #e67e22, #d35400);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #f39c12, #d35400);
             color: white;
             text-decoration: none;
-            font-size: 22px;
-            font-weight: 600;
+            font-size: 26px;
+            font-weight: 700;
             padding: 15px 50px;
+            min-width: 250px;
             border-radius: 50px;
-            transition: all 0.2s ease;
-            box-shadow: 0 6px 15px rgba(211, 84, 0, 0.5);
+            border: 3px solid #ffdb58;
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.5), inset 0 2px 2px rgba(255,255,255,0.4);
             text-transform: uppercase;
             letter-spacing: 2px;
-            border: 3px solid #bda26b;
-            cursor: pointer;
-            /* เพิ่มเพื่อให้กดติดง่ายขึ้นบนมือถือ */
-            position: relative;
-            z-index: 10;
+            transition: transform 0.1s;
         }
 
-        .btn-start:hover {
-            background: linear-gradient(45deg, #f39c12, #e67e22);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(211, 84, 0, 0.8);
-        }
-
+        /* เอฟเฟกต์เวลากดปุ่ม */
         .btn-start:active {
-            transform: translateY(2px);
-            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.6);
+            transform: scale(0.95); /* ปุ่มยุบลงเวลากด */
+            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.5);
         }
 
+        /* ข้อความแจ้งเตือนด้านล่างสุด */
         .notice {
-            margin-top: 30px;
-            padding: 15px;
-            background: rgba(189, 162, 107, 0.15);
-            border-left: 5px solid #bda26b;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #bda26b;
-            text-align: left;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- อย่าลืมนำไฟล์ statarena-logo-official.png อัปโหลดขึ้น GitHub ด้วย -->
-        <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
-
-        <h1>🎮 ยินดีต้อนรับ</h1>
-        <p>คลิกที่ปุ่มด้านล่างเพื่อเข้าสู่ระบบ<br>และเริ่มต้นความสนุกได้เลย!</p>
+    <div class="game-screen">
         
-        <!-- แก้ไขลิงก์: เอา target="_blank" ออก เพื่อป้องกันเบราว์เซอร์มือถือบล็อกหน้าต่างใหม่ และให้เนียนเหมือนเล่นในแอป -->
-        <a href="https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
-           class="btn-start">
-            เริ่มเกม
-        </a>
-
-        <div class="notice">
-            หากคุณล็อกอินไว้หลายอีเมล ระบบจะให้คุณเลือกบัญชี Google ก่อนเข้าเกม เพื่อป้องกันปัญหาการโหลดหน้าเว็บไม่สำเร็จ
+        <!-- โลโก้เกมขยายเต็มจอ -->
+        <div class="logo-section">
+            <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
         </div>
+
+        <!-- ส่วนของปุ่มเข้าเกม -->
+        <div class="action-section">
+            <h1>เข้าสู่สนามประลอง</h1>
+            <p>เตรียมตัวให้พร้อม แล้วเริ่มเกมได้เลย</p>
+            
+            <!-- ใช้ลิงก์ตรงของ Google Script เพื่อแก้ปัญหากดไม่ไปใน Chrome -->
+            <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" class="btn-start">
+                เริ่มเกม
+            </a>
+        </div>
+        
+        <div class="notice">
+            ระบบจะให้คุณลงชื่อเข้าใช้ด้วยบัญชี Google อัตโนมัติ
+        </div>
+
     </div>
 
 </body>
