@@ -99,29 +99,7 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        .copy-link-btn {
-            margin-top: 20px;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: rgba(255, 255, 255, 0.7);
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-family: 'Prompt', sans-serif;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-link-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .copy-link-btn:active {
-            transform: scale(0.95);
-        }
-
+        
         .notice {
             position: absolute;
             bottom: 25px;
@@ -137,8 +115,8 @@
 
     <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
 
-    <!-- ลิงก์ตรงที่ต่อท้ายด้วย ?authuser=0 เพื่อบังคับใช้บัญชีหลักของเครื่อง -->
-    <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec?authuser=0" 
+    <!-- ลิงก์ตรงที่สะอาดที่สุด ไม่มีพารามิเตอร์เช็คบัญชีใดๆ ทั้งสิ้น -->
+    <a href="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec" 
        id="startGameBtn" 
        class="btn-start" 
        target="_top"
@@ -147,13 +125,8 @@
         <div class="mini-spinner" id="btnSpinner"></div>
     </a>
 
-    <!-- ปุ่มคัดลอกลิงก์ -->
-    <button class="copy-link-btn" onclick="copyGameLink()">
-        🔗 หากเข้าเกมไม่ได้ คลิกเพื่อคัดลอกลิงก์
-    </button>
-
     <div class="notice">
-        ระบบจะเชื่อมต่อเข้าสู่เกมด้วยบัญชีหลักของเครื่องโดยอัตโนมัติ
+        คลิกเพื่อเริ่มต้นเกมได้ทันที
     </div>
 
     <script>
@@ -161,29 +134,7 @@
             const btn = document.getElementById('startGameBtn');
             const text = document.getElementById('btnText');
             btn.classList.add('is-loading');
-            text.innerText = 'กำลังเชื่อมต่อระบบ...';
-        }
-
-        function copyGameLink() {
-            // อัปเดตลิงก์สำหรับปุ่มคัดลอกให้มี ?authuser=0 ด้วยเช่นกัน
-            const gameUrl = "https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec?authuser=0";
-            const tempInput = document.createElement("input");
-            tempInput.value = gameUrl;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            
-            const copyBtn = document.querySelector('.copy-link-btn');
-            copyBtn.innerText = "✅ คัดลอกแล้ว! นำไปวางในแถบ URL ด้านบนได้เลย";
-            copyBtn.style.color = "#4CAF50";
-            copyBtn.style.borderColor = "#4CAF50";
-            
-            setTimeout(() => {
-                copyBtn.innerText = "🔗 หากเข้าเกมไม่ได้ คลิกเพื่อคัดลอกลิงก์";
-                copyBtn.style.color = "rgba(255, 255, 255, 0.7)";
-                copyBtn.style.borderColor = "rgba(255, 255, 255, 0.3)";
-            }, 5000);
+            text.innerText = 'กำลังเข้าสู่เกม...';
         }
     </script>
 
