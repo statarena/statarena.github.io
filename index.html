@@ -12,12 +12,11 @@
             margin: 0;
             padding: 0;
             width: 100vw;
-            height: 100dvh; /* ใช้ dvh เพื่อแก้ปัญหาจอมือถือ */
+            height: 100dvh; 
             overflow: hidden;
-            background-color: #0d1117; /* สีดำธีมเกม */
+            background-color: #0d1117; 
         }
 
-        /* ตั้งค่า iframe ให้กินพื้นที่เต็มหน้าจอ */
         .game-frame {
             width: 100%;
             height: 100%;
@@ -25,7 +24,6 @@
             display: block;
         }
 
-        /* หน้าจอโหลดบังหน้าเว็บไว้ก่อนระหว่างรอ Google Script ดึงข้อมูล */
         .loading-screen {
             position: absolute;
             top: 0;
@@ -39,20 +37,27 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 0.5s ease;
-            pointer-events: none;
+            /* เปลี่ยนให้รับการสัมผัสได้ เพื่อให้ผู้เล่นกดข้ามได้ */
+            cursor: pointer; 
         }
 
         .game-logo {
             width: 70vw;
             max-width: 300px;
             animation: pulse 2s infinite;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .spinner {
@@ -62,40 +67,68 @@
             border-top: 4px solid #bda26b;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .tap-text {
+            color: #bda26b;
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            animation: blink 1.5s infinite;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- หน้าจอ Loading สวยๆ ตอนเปิดเข้ามา -->
-    <div class="loading-screen" id="loadingScreen">
+    <!-- หน้าจอ Loading พร้อมฟังก์ชันให้กดคลิก/แตะ เพื่อซ่อนหน้าจอได้ทันที -->
+    <div class="loading-screen" id="loadingScreen" onclick="forceHideLoading()">
         <img src="statarena-logo-official.png" alt="STAT ARENA" class="game-logo">
-        <div class="spinner"></div>
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <div class="tap-text">กำลังโหลด... (แตะหน้าจอเพื่อเข้าเกม)</div>
+        </div>
     </div>
 
-    <!-- ฝัง Google Apps Script ลงในหน้านี้เลย (ใส่ลิงก์ที่สะอาดของคุณลงใน src) -->
+    <!-- ฝัง Google Apps Script -->
     <iframe 
         class="game-frame" 
         src="https://script.google.com/macros/s/AKfycbx2Fs7qkyB-MhJycivrq-0QMNO8_T-5DqsztRnuQLIZuO5PgNAN6EB6_fI_5pc7mk_x/exec"
-        onload="hideLoading()">
+        onload="onFrameLoad()">
     </iframe>
 
     <script>
-        // เมื่อ iframe โหลดหน้า Google Script เสร็จ ให้ซ่อนหน้า Loading
-        function hideLoading() {
+        let isLoaded = false;
+
+        // ฟังก์ชันซ่อนหน้าจอโหลด
+        function forceHideLoading() {
+            if (isLoaded) return;
+            isLoaded = true;
+            
+            const loader = document.getElementById('loadingScreen');
+            loader.style.opacity = '0';
             setTimeout(() => {
-                const loader = document.getElementById('loadingScreen');
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
-            }, 1000); // หน่วงเวลา 1 วินาทีให้โหลดภาพครบ
+                loader.style.display = 'none';
+            }, 500);
         }
+
+        // กรณีที่ 1: ซ่อนอัตโนมัติเมื่อ iframe โหลดเสร็จ (หน่วงเวลาไว้ 1 วิ เพื่อความลื่นไหล)
+        function onFrameLoad() {
+            setTimeout(forceHideLoading, 1000);
+        }
+
+        // กรณีที่ 2 (แผนสำรอง): ถ้ามือถือบล็อกการโหลด ให้ซ่อนหน้าจอโหลดอัตโนมัติภายใน 4 วินาที
+        // เพื่อป้องกันหน้าจอหมุนค้างตลอดกาล
+        setTimeout(forceHideLoading, 4000);
     </script>
 
 </body>
